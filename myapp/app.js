@@ -5,6 +5,11 @@ const port = 3000;
 // Middleware to parse JSON request bodies
 app.use(express.json());
 
+const swaggerUi = require('swagger-ui-express');
+const openapiSpec = require('./openapi.json');
+
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(openapiSpec));
+
 // In-memory "database"
 let tasks = [
   { id: 1, title: "Learn Express basics", done: true },
