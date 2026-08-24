@@ -2,6 +2,9 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
+// Middleware to parse JSON request bodies
+app.use(express.json());
+
 // In-memory "database"
 let tasks = [
   { id: 1, title: "Learn Express basics", done: true },
@@ -36,6 +39,28 @@ app.get('/tasks/:id', (req, res) => {
   }
 
   res.json(task);
+});
+
+// POST /tasks — create a new task
+app.post('/tasks', (req, res) => {
+  const { title } = req.body;
+
+  if (!title || title.trim() === '') {
+    return res.status(400).json({ error: "Title is required and cannot be empty" });
+  }
+
+  const nextId = tasks.length > 0
+    ? Math.max(...tasks.map(t => t.id)) + 1
+    : 1;
+
+  const newTask = {
+    id: nextId,
+    title: title.trim(),
+    done: false
+  };
+
+  tasks.push(newTask);
+  res.status(201).json(newTask);
 });
 
 app.listen(port, () => {
